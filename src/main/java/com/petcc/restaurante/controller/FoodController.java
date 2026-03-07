@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,18 +19,30 @@ import org.springframework.web.bind.annotation.RestController;
 import com.petcc.restaurante.model.Food;
 import com.petcc.restaurante.service.FoodService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/foods")
+@CrossOrigin(origins = "*")
+@Tag(
+    name = "FoodController",
+    description = "Endpoints para gerenciamento de comidas")
 public class FoodController {
     @Autowired
     private FoodService foodService;
 
+    @Operation(
+        summary = "Obter todas as comidas",
+        description = "Retorna uma lista com todas as comidas disponíveis.")
     @GetMapping("/get")
-
     public ResponseEntity<List<Food>> getAllFoods(){
         List<Food> foods = foodService.getAllFoods();
         return new ResponseEntity<List<Food>>(foods, HttpStatus.OK);
     }
+    @Operation(
+        summary = "Deletar uma comida",
+        description = "Deleta uma comida com base no ID fornecido.")
     @DeleteMapping("/delete")
     public ResponseEntity<Food> deleteFood(Long id){
         boolean deleted = foodService.deleteFood(id);
@@ -39,6 +52,9 @@ public class FoodController {
             return new ResponseEntity<Food>(HttpStatus.NOT_FOUND);
         }
     }
+    @Operation(
+        summary = "Salvar uma comida",
+        description = "Salva uma nova comida com os dados fornecidos.")
     @PostMapping("/save")
     public ResponseEntity<Food> saveFood(@RequestBody Food food){
         try {
@@ -52,6 +68,9 @@ public class FoodController {
             return new ResponseEntity<Food>(HttpStatus.BAD_REQUEST);
         }
     }
+    @Operation(
+        summary = "Atualizar uma comida",
+        description = "Atualiza os dados de uma comida existente com base no ID fornecido.")
     @PutMapping("/update")
     public ResponseEntity<Food> updateFood(@RequestBody Food food){
         try {
